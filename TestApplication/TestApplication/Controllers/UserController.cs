@@ -6,7 +6,7 @@ using TestApplication.Models;
 namespace TestApplication.Controllers;
 
 [ApiController]
-[Route("user")]
+[Route("api/user")]
 public class UserController : Controller
 {
     private readonly IUserRepository _userRepository;
@@ -16,7 +16,7 @@ public class UserController : Controller
     }
     
     [HttpGet("all")]
-    public IActionResult AllUsers()
+    public  IActionResult AllUsers()
     {
         try
         {

@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@using TestApplication.Models
+@inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
+
+<h1>Справочник пользователей:</h1>
+
+@if (_users == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in _users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+                <td>@user.PatronymicName</td>
+                <button class="btn-info" >Изменить</button>
+                <button class="btn-outline-danger" @onclick="() => Delete(user)">Удалить</button>
+            </tr>
+            
+        }
+        </tbody>
+    </table>
+    <button class="btn-info">Добавить</button>
+}
+
+@code{
+    private List<User>? _users;
+    
+
+    protected override async Task OnInitializedAsync()   
+    {
+        HttpClient.BaseAddress = new Uri("https://localhost:7028");
+        _users = await HttpClient.GetFromJsonAsync<List<User>>("api/user/all");
+    }
+
+    private async Task Delete(User user)
+    {
+        await HttpClient.PostAsJsonAsync("api/user/delete", user);
+        _users = await HttpClient.GetFromJsonAsync<List<User>>("api/user/all");
+    }
+}
