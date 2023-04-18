@@ -59,4 +59,34 @@ public class UserController : Controller
             return NotFound();
         }
     }
+    
+    [HttpPost("edit")]
+    public async Task<IActionResult> EditUser([FromBody]User user)
+    {
+        try
+        {
+            //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
+            await _userRepository.EditUser(user);
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return NotFound();
+        }
+    }
+    
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeleteUser([FromBody]User user)
+    {
+        try
+        {
+            //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
+            await _userRepository.DeleteUser(user);
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return NotFound();
+        }
+    }
 }
