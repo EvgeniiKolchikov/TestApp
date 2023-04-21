@@ -3,6 +3,5 @@ bin/
 obj/
 migrations/
 desktop.ini
-appsettings.json
 Migrations/
 
