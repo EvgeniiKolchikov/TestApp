@@ -1,12 +1,13 @@
 using TestApplication.Models;
+using TestApplication.Models.ViewModels;
 
 namespace TestApplication.Interfaces;
 
 public interface IUserRepository
 {
-    Task AddUser(User user);
-    Task<User> GetUser(int id);
-    IEnumerable<User> GetAllUsers();
-    Task EditUser(User user);
-    Task DeleteUser(User user);
+    Task AddUser(UserViewModel user);
+    Task<UserViewModel> GetUser(int id);
+    IQueryable<UserViewModel> GetAllUsers();
+    Task EditUser(UserViewModel user);
+    Task DeleteUser(UserViewModel user);
 }

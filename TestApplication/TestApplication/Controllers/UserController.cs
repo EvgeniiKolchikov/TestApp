@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TestApplication.Exceptions;
 using TestApplication.Interfaces;
-using TestApplication.Models;
+using TestApplication.Models.ViewModels;
 
 namespace TestApplication.Controllers;
 
@@ -15,8 +15,8 @@ public class UserController : Controller
         _userRepository = userRepository;
     }
     
-    [HttpGet("all")]
-    public  IActionResult AllUsers()
+    [HttpGet]
+    public IActionResult AllUsers()
     {
         try
         {
@@ -35,18 +35,16 @@ public class UserController : Controller
         try
         {
             var user = await _userRepository.GetUser(id);
-            HttpContext.Response.StatusCode = 200;
             return Json(user);
         }
         catch (CustomException)
         {
-            HttpContext.Response.StatusCode = 204;
             return NotFound();
         }
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateUser([FromBody]User user)
+    [HttpPost]
+    public async Task<IActionResult> CreateUser([FromBody]UserViewModel user)
     {
         try
         {
@@ -60,13 +58,13 @@ public class UserController : Controller
         }
     }
     
-    [HttpPost("edit")]
-    public async Task<IActionResult> EditUser([FromBody]User user)
+    [HttpPut]
+    public async Task<IActionResult> EditUser([FromBody]UserViewModel userViewModel)
     {
         try
         {
             //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
-            await _userRepository.EditUser(user);
+            await _userRepository.EditUser(userViewModel);
             return Ok();
         }
         catch (Exception)
@@ -75,8 +73,8 @@ public class UserController : Controller
         }
     }
     
-    [HttpPost("delete")]
-    public async Task<IActionResult> DeleteUser([FromBody]User user)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUser([FromBody]UserViewModel user)
     {
         try
         {

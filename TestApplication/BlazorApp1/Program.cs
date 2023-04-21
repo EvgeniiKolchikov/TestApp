@@ -1,10 +1,17 @@
-
 var builder = WebApplication.CreateBuilder(args);
+
+var baseAddress = builder.Configuration["ApiUrl"];
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped(sp =>
+{
+    var client = new HttpClient();
+    client.BaseAddress = new Uri(baseAddress);
+    return client;
+});
 
 var app = builder.Build();
 
