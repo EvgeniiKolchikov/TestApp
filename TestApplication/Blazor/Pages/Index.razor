@@ -1,0 +1,73 @@
+﻿@page "/"
+
+@using WebApi.Models.ViewModels
+@using System.Text.Json
+@using System.Text
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1 class="mb-3">Справочник пользователей:</h1>
+
+@if (_users == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in _users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+                <td>@user.PatronymicName</td>
+                <button class="btn-info" @onclick="() => EditUserPage(user.Id)">Изменить</button>
+                <button class="btn-outline-danger" @onclick="() => DeleteUser(user)">Удалить</button>
+            </tr>
+            
+        }
+        </tbody>
+    </table>
+    <button class="btn-info" @onclick="CreateUserPage">Добавить</button>
+}
+
+@code{
+    private List<UserViewModel>? _users;
+    
+    protected override async Task OnInitializedAsync()   
+    {
+        _users = await HttpClient.GetFromJsonAsync<List<UserViewModel>>("api/user");
+    }
+
+    private async Task DeleteUser(UserViewModel user)
+    {
+        var json = JsonSerializer.Serialize(user);
+        var request = new HttpRequestMessage(HttpMethod.Delete, "api/user");
+        request.Content = new StringContent(json,Encoding.UTF8, "application/json");
+        await HttpClient.SendAsync(request);
+        _users = await HttpClient.GetFromJsonAsync<List<UserViewModel>>("api/user");
+    }
+
+    private void CreateUserPage()
+    {
+        NavigationManager.NavigateTo("/user");
+    }
+
+    private void EditUserPage(int id)
+    {
+        NavigationManager.NavigateTo($"/user/{id}");
+    }
+    
+}
