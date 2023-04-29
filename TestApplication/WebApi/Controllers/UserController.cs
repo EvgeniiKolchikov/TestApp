@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Exceptions;
 using WebApi.Interfaces;
+using WebApi.Models;
 using WebApi.Models.ViewModels;
 
 namespace WebApi.Controllers;
@@ -10,10 +11,12 @@ namespace WebApi.Controllers;
 public class UserController : Controller
 {
     private readonly IUserRepository _userRepository;
-
-    public UserController(IUserRepository userRepository)
+    private readonly IActiveDirectoryProvider _provider;
+    private readonly Client _client;
+    public UserController(IUserRepository userRepository, IActiveDirectoryProvider provider)
     {
         _userRepository = userRepository;
+        _provider = provider;
     }
     
     [HttpGet]
@@ -49,9 +52,12 @@ public class UserController : Controller
     {
         try
         {
-            //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
-            await _userRepository.AddUser(user);
-            return Ok();
+            if (_provider.UserExist())
+            {
+                await _userRepository.AddUser(user);
+                return Ok();
+            }
+            return NotFound();
         }
         catch (Exception)
         {
