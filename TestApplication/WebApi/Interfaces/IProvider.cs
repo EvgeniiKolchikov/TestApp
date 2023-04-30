@@ -2,7 +2,7 @@ using System.DirectoryServices.AccountManagement;
 
 namespace WebApi.Interfaces;
 
-public interface IActiveDirectoryProvider
+public interface IProvider
 {
     bool UserExist();
 }

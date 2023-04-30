@@ -11,7 +11,7 @@ var connection = builder.Configuration.GetConnectionString("InMemoryDb");
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseInMemoryDatabase(connection));
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IActiveDirectoryProvider, ActiveDirectoryProvider>();
+builder.Services.AddTransient<IProvider, Provider>();
 
 var app = builder.Build();
 

@@ -11,9 +11,8 @@ namespace WebApi.Controllers;
 public class UserController : Controller
 {
     private readonly IUserRepository _userRepository;
-    private readonly IActiveDirectoryProvider _provider;
-    private readonly Client _client;
-    public UserController(IUserRepository userRepository, IActiveDirectoryProvider provider)
+    private readonly IProvider _provider;
+    public UserController(IUserRepository userRepository, IProvider provider)
     {
         _userRepository = userRepository;
         _provider = provider;
@@ -52,12 +51,9 @@ public class UserController : Controller
     {
         try
         {
-            if (_provider.UserExist())
-            {
-                await _userRepository.AddUser(user);
-                return Ok();
-            }
-            return NotFound();
+            if (!_provider.UserExist()) return NotFound();
+            await _userRepository.AddUser(user);
+            return Ok();
         }
         catch (Exception)
         {
@@ -70,7 +66,7 @@ public class UserController : Controller
     {
         try
         {
-            //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
+            if (!_provider.UserExist()) return NotFound();
             await _userRepository.EditUser(userViewModel);
             return Ok();
         }
@@ -85,7 +81,7 @@ public class UserController : Controller
     {
         try
         {
-            //  При создании, либо изменении записи справочника сервис должен выполнять проверку наличия информации о пользователе в домене Active Directory
+            if (!_provider.UserExist()) return NotFound();
             await _userRepository.DeleteUser(user);
             return Ok();
         }
